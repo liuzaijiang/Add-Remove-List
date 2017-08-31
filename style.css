@@ -1,0 +1,93 @@
+﻿   *{
+        margin:0;
+        padding:0;
+    }
+    
+   .wrapSelect{
+        position:relative;
+        width:400px;
+        height:200px;
+   }
+   
+   .wrapSelect select{
+        position:absolute;
+        top:10px;
+        width:100px;
+        height:150px;
+        overflow-y:scroll;
+   }
+   
+   .selectBox{
+        position:absolute;
+        top:10px;
+        width:100px;
+        height:150px;
+        overflow-y:scroll;
+        border:1px solid #d4d4d4;
+   }
+   
+   .selectBox li{
+        height:25px;
+        line-height:25px;
+        list-style:none;
+        border-bottom:1px solid #e4e4e4;
+        font-size:1.1em;
+        font-family:tahoma,arial,'Hiragino Sans GB','\5b8b\4f53',sans-serif
+   }
+   
+   .selectBox li:hover{
+        cursor:pointer;
+        background-color:#d4d4d4;
+   }
+   
+   .active{
+        background-color:#d4d4d4;
+   }
+   
+   .selectLeft{
+        left:10px;
+   }
+   
+   .selectRight{
+        left:260px;
+   }
+   
+   
+   .buttonGroup{
+        position:absolute;
+        top:10px;
+        left:150px;
+   }
+   
+   
+   .buttonGroup button{
+        display:block;
+        margin:2px;
+        height:35px; 
+        width:70px;
+        border:0; 
+        background-repeat:no-repeat
+   }
+   
+   .buttonGroup button:hover{
+        cursor:pointer;
+   }
+   
+   .addBtn{
+        background-image:url(images/toRight.bmp); 
+   }
+   
+   
+   .addAllBtn{
+        background-image:url(images/allRight.bmp); 
+   }
+   
+   
+   .removeBtn{
+        background-image:url(images/toLeft.bmp); 
+   }
+   
+   
+   .removeAllBtn{
+        background-image:url(images/allLeft.bmp); 
+   }
