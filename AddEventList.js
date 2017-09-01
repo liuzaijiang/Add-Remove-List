@@ -1,4 +1,4 @@
-﻿$(function () {
+﻿(function () {
 	/*渲染的html节点模板*/
 	var jsonData = {
 		tagName : "div",
@@ -103,7 +103,7 @@
 			this.mutexArry2.push(item.split("-")[1]);
 			this.alertMutex.push(item + "(不能同时存在)");
 		}.bind(this))
-		this.init();
+        this.init();
 	}
 
 	AddEventList.prototype.count = 0;
@@ -181,13 +181,15 @@
 		})
 
 		/*单击*/
-		$(id + ".selectBox li").toggle(function () {
+		$(id + ".selectBox li").click(function () {
 			var ix = $(this).parent()[0].className.indexOf("selectLeft");
 			var dest = ix != -1 ? id + ".selectRight" : id + ".selectLeft";
 			$(dest + " li").removeClass("active");
-			$(this).addClass("active");
-		}, function () {
-			$(this).removeClass("active");
+			if ($(this).is(".active")) {
+				$(this).removeClass("active");
+			} else {
+				$(this).addClass("active");
+			}
 		})
 
 		/*按钮点击*/
