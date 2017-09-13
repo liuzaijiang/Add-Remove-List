@@ -89,6 +89,41 @@
 		};
 	}
 
+    /*节点构造函数*/
+	function Element(obj) {
+		this.tagName = obj.tagName;
+		this.props = obj.props;
+		var children = obj.children.map(function (item) {
+        if (Object.prototype.toString.call(item)=='[object Object]') //如果包裹的是一个对象的话，继续new Element
+          {
+            item = new Element(item)
+          }
+		  return item
+         })
+	   this.children = children;
+	}
+
+	Element.prototype.render = function () {
+		var el = document.createElement(this.tagName) // 根据tagName构建
+			var props = this.props
+
+			for (var propName in props) { // 设置节点的DOM属性
+				var propValue = props[propName]
+					el.setAttribute(propName, propValue)
+			}
+
+			var children = this.children || []
+
+			children.forEach(function (child) {
+				var childEl = (child instanceof Element)
+				 ? child.render() // 如果子节点也是虚拟DOM，递归构建DOM节点
+				 : document.createTextNode(child) // 如果字符串，只构建文本节点
+				el.appendChild(childEl)
+			})
+
+			return el
+	}
+
 	function AddEventList(obj) {
 		this.dataLeftArray = obj.leftData;
 		this.dataRightArray = obj.rightData;
@@ -98,11 +133,14 @@
 		this.mountDomId = obj.mountDomId;
 		this.templateJson = deepCopy(jsonData);
 		this.indexList = 0;
-		obj.mutexData.map(function (item) {
-			this.mutexArry1.push(item.split("-")[0]);
-			this.mutexArry2.push(item.split("-")[1]);
-			this.alertMutex.push(item + "(不能同时存在)");
-		}.bind(this))
+        if(obj.mutexData)
+        {
+           obj.mutexData.map(function (item) {
+			  this.mutexArry1.push(item.split("-")[0]);
+			  this.mutexArry2.push(item.split("-")[1]);
+			  this.alertMutex.push(item + "(不能同时存在)");
+		 }.bind(this))
+        }
         this.init();
 	}
 
@@ -115,17 +153,14 @@
 			var childObj = {};
 			childObj.tagName = "li";
 			childObj.children = [arr[i]];
+            childObj.props={};
 			var indexMutex1 = this.mutexArry1.indexOf(arr[i]);
 			var indexMutex2 = this.mutexArry2.indexOf(arr[i])
 				if (indexMutex1 != -1) {
-					childObj.props = {
-						'data-mutex' : indexMutex1
-					}
+                    childObj.props['data-mutex']=indexMutex1;
 				}
 				if (indexMutex2 != -1) {
-					childObj.props = {
-						'data-mutex' : indexMutex2
-					}
+                    childObj.props['data-mutex']=indexMutex2;
 				}
 				this.templateJson.children[ix].children.push(childObj);
 		}
@@ -319,41 +354,6 @@
 		}
 		this.resBtnState();
 	}
-	/*节点构造函数*/
-	function Element(obj) {
-		this.tagName = obj.tagName;
-		this.props = obj.props;
-		var children = obj.children.map(function (item) {
-				if (typeof item == "object") //如果包裹的是一个对象的话，继续new Element
-				{
-					item = new Element(item)
-				}
-				return item
-			})
-			this.children = children;
-	}
-
-	Element.prototype.render = function () {
-		var el = document.createElement(this.tagName) // 根据tagName构建
-			var props = this.props
-
-			for (var propName in props) { // 设置节点的DOM属性
-				var propValue = props[propName]
-					el.setAttribute(propName, propValue)
-			}
-
-			var children = this.children || []
-
-			children.forEach(function (child) {
-				var childEl = (child instanceof Element)
-				 ? child.render() // 如果子节点也是虚拟DOM，递归构建DOM节点
-				 : document.createTextNode(child) // 如果字符串，只构建文本节点
-				el.appendChild(childEl)
-			})
-
-			return el
-	}
-
 	window.AddEventList = AddEventList;
 
 }())
