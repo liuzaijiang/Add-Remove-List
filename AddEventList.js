@@ -1,56 +1,56 @@
 ﻿(function () {
 	/*渲染的html节点模板*/
 	var jsonData = {
-		tagName : "div",
-		props : {
-			class : "wrapSelect"
+		"tagName" : "div",
+		"props" : {
+			"class" : "wrapSelect"
 		},
-		children :
+		"children" :
 		[{
-				tagName : "ul",
-				props : {
-					class : "selectBox selectLeft"
+				"tagName" : "ul",
+				"props" : {
+					"class" : "selectBox selectLeft"
 				},
-				children : []
+				"children" : []
 			}, {
-				tagName : "div",
-				props : {
-					class : "buttonGroup"
+				"tagName" : "div",
+				"props" : {
+					"class" : "buttonGroup"
 				},
-				children :
+				"children" :
 				[{
-						tagName : "button",
-						props : {
-							class : "addBtn",
+						"tagName" : "button",
+						"props" : {
+							"class" : "addBtn",
 						},
-						children : [""]
+						"children" : [""]
 					}, {
-						tagName : "button",
-						props : {
-							class : "addAllBtn",
+						"tagName" : "button",
+						"props" : {
+							"class" : "addAllBtn",
 						},
-						children : [""]
+						"children" : [""]
 
 					}, {
-						tagName : "button",
-						props : {
-							class : "removeBtn",
+						"tagName" : "button",
+						"props" : {
+							"class" : "removeBtn",
 						},
-						children : [""]
+						"children" : [""]
 					}, {
-						tagName : "button",
-						props : {
-							class : "removeAllBtn",
+						"tagName" : "button",
+						"props" : {
+							"class" : "removeAllBtn",
 						},
-						children : [""]
+						"children" : [""]
 					}
 				]
 			}, {
-				tagName : "ul",
-				props : {
-					class : "selectBox selectRight",
+				"tagName" : "ul",
+				"props" : {
+					"class" : "selectBox selectRight",
 				},
-				children : []
+				"children" : []
 			}
 		]
 	}
@@ -68,6 +68,30 @@
 			}
 		}
 		return c;
+	}
+
+
+	if (!Array.prototype.forEach) {
+		Array.prototype.forEach = function (callback, context) {
+			context = context || window;
+			for (var i = 0, len = this.length; i < len; i++) {
+				callback && callback.call(context, this[i], i, this);
+			}
+		}
+	}
+    
+	if (!Array.prototype.map) {
+		Array.prototype.map = function (callback, context) {
+			context = context || window;
+			var newAry = [];
+			for (var i = 0, len = this.length; i < len; i++) {
+				if (typeof callback === 'function') {
+					var val = callback.call(context, this[i], i, this);
+					newAry[newAry.length] = val;
+				}
+			}
+			return newAry;
+		}
 	}
 
 	//让bind函数支持IE8
@@ -89,18 +113,18 @@
 		};
 	}
 
-    /*节点构造函数*/
+	/*节点构造函数*/
 	function Element(obj) {
 		this.tagName = obj.tagName;
 		this.props = obj.props;
 		var children = obj.children.map(function (item) {
-        if (Object.prototype.toString.call(item)=='[object Object]') //如果包裹的是一个对象的话，继续new Element
-          {
-            item = new Element(item)
-          }
-		  return item
-         })
-	   this.children = children;
+				if (Object.prototype.toString.call(item) == '[object Object]') //如果包裹的是一个对象的话，继续new Element
+				{
+					item = new Element(item)
+				}
+				return item
+			})
+			this.children = children;
 	}
 
 	Element.prototype.render = function () {
@@ -133,15 +157,15 @@
 		this.mountDomId = obj.mountDomId;
 		this.templateJson = deepCopy(jsonData);
 		this.indexList = 0;
-        if(obj.mutexData)
-        {
-           obj.mutexData.map(function (item) {
-			  this.mutexArry1.push(item.split("-")[0]);
-			  this.mutexArry2.push(item.split("-")[1]);
-			  this.alertMutex.push(item + "(不能同时存在)");
-		 }.bind(this))
-        }
-        this.init();
+		if (obj.mutexData) {
+			obj.mutexData.map(function (item) {
+				this.mutexArry1.push(item.split("-")[0]);
+				this.mutexArry2.push(item.split("-")[1]);
+				this.alertMutex.push(item + "(不能同时存在)");
+			}
+				.bind(this))
+		}
+		this.init();
 	}
 
 	AddEventList.prototype.count = 0;
@@ -153,14 +177,16 @@
 			var childObj = {};
 			childObj.tagName = "li";
 			childObj.children = [arr[i]];
-            childObj.props={};
-			var indexMutex1 = this.mutexArry1.indexOf(arr[i]);
-			var indexMutex2 = this.mutexArry2.indexOf(arr[i])
+			childObj.props = {};
+            var indexMutex1 = _.indexOf(this.mutexArry1,arr[i]);
+            var indexMutex2 = _.indexOf(this.mutexArry2,arr[i]);
+			//var indexMutex1 = this.mutexArry1.indexOf(arr[i]);
+			//var indexMutex2 = this.mutexArry2.indexOf(arr[i])
 				if (indexMutex1 != -1) {
-                    childObj.props['data-mutex']=indexMutex1;
+					childObj.props['data-mutex'] = indexMutex1;
 				}
 				if (indexMutex2 != -1) {
-                    childObj.props['data-mutex']=indexMutex2;
+					childObj.props['data-mutex'] = indexMutex2;
 				}
 				this.templateJson.children[ix].children.push(childObj);
 		}
@@ -249,7 +275,7 @@
 					var mutexLeftLen = mutexLeft.length,
 					res = [];
 					for (var i = 0; i < mutexLeftLen; i++) {
-						if (res.indexOf(mutexLeft[i]) == -1) {
+						if (_.indexOf(res,mutexLeft[i]) == -1) {
 							res.push(mutexLeft[i])
 						} else {
 							mutexFlag = true;
@@ -259,7 +285,7 @@
 						}
 					}
 					mutexLeft.map(function (item) {
-						if (mutexRight.indexOf(item) != -1) {
+						if (_.indexOf(mutexRight,item) != -1) {
 							mutexFlag = true;
 							alert(_this.alertMutex[item]);
 						}
@@ -304,7 +330,7 @@
 					var mutexLeftLen = mutexLeft.length,
 					res = [];
 					for (var i = 0; i < mutexLeftLen; i++) {
-						if (res.indexOf(mutexLeft[i]) == -1) {
+						if (_.indexOf(res,mutexLeft[i]) == -1) {
 							res.push(mutexLeft[i])
 						} else {
 							mutexFlag = true;
@@ -314,7 +340,7 @@
 						}
 					}
 					mutexLeft.map(function (item) {
-						if (mutexRight.indexOf(item) != -1) {
+						if (_.indexOf(mutexRight,item) != -1) {
 							mutexFlag = true;
 							alert(_this.alertMutex[item]);
 						}
@@ -356,4 +382,5 @@
 	}
 	window.AddEventList = AddEventList;
 
-}())
+}
+	())
