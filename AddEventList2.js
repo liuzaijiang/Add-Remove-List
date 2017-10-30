@@ -1,69 +1,4 @@
 (function () {
-	var jsonData = {
-		"tagName" : "div",
-		"props" : {
-			"class" : "wrapSelect"
-		},
-		"children" : [{
-				"tagName" : "ul",
-				"props" : {
-					"class" : "selectBox selectLeft"
-				},
-				"children" : []
-			}, {
-				"tagName" : "div",
-				"props" : {
-					"class" : "buttonGroup"
-				},
-				"children" : [{
-						"tagName" : "button",
-						"props" : {
-							"class" : "addBtn",
-						},
-						"children" : [""]
-					}, {
-						"tagName" : "button",
-						"props" : {
-							"class" : "addAllBtn",
-						},
-						"children" : [""]
-					}, {
-						"tagName" : "button",
-						"props" : {
-							"class" : "removeBtn",
-						},
-						"children" : [""]
-					}, {
-						"tagName" : "button",
-						"props" : {
-							"class" : "removeAllBtn",
-						},
-						"children" : [""]
-					}
-				]
-			}, {
-				"tagName" : "ul",
-				"props" : {
-					"class" : "selectBox selectRight",
-				},
-				"children" : []
-			}
-		]
-	}
-	function deepCopy(p, c) {
-		c = c || {};
-		for (var i in p) {
-			if (p.hasOwnProperty(i)) {
-				if (typeof p[i] === 'object') {
-					c[i] = Object.prototype.toString.call(p[i]) === '[object Array]' ? [] : {}
-					deepCopy(p[i], c[i]);
-				} else {
-					c[i] = p[i];
-				}
-			}
-		}
-		return c;
-	}
 	if (!Array.prototype.forEach) {
 		Array.prototype.forEach = function (callback, context) {
 			context = context || window;
@@ -101,32 +36,27 @@
 			return fBound;
 		};
 	}
+	var templateString =
+		'<div class="wrapSelect" id="wrapSelect<%=count%>">' +
+            '<ul class="selectBox selectLeft"><%=leftLi%></ul>' +
+            '<div class="buttonGroup">' +
+                '<button class="addBtn"></button>' +
+                '<button class="addAllBtn"></button>' +
+                '<button class="removeBtn"></button>' +
+                '<button class="removeAllBtn"></button>' +
+            '</div>' +
+            '<ul class="selectBox selectRight"><%=rightLi%><ul>' +
+		'</div>'
 
-	function Element(obj) {
-		this.tagName = obj.tagName;
-		this.props = obj.props;
-		var children = obj.children.map(function (item) {
-				if (Object.prototype.toString.call(item) == '[object Object]') {
-					item = new Element(item)
-				}
-				return item
-			})
-			this.children = children;
+		var fillDataObj = {
+		count : "",
+		leftLi : "",
+		rightLi : ""
 	}
-	Element.prototype.render = function () {
-		var el = document.createElement(this.tagName)
-			var props = this.props
-			for (var propName in props) {
-				var propValue = props[propName]
-					el.setAttribute(propName, propValue)
-			}
-			var children = this.children || []
-			children.forEach(function (child) {
-				var childEl = (child instanceof Element) ? child.render() : document.createTextNode(child)
-				el.appendChild(childEl)
-			})
-			return el
-	}
+
+	var template_li = '<li data-name="<%=dataName%>"><%=item%></li>';
+	var template_li_mutex = '<li data-name="<%=dataName%>" data-mutex="<%=dataMutex%>"><%=item%></li>';
+
 	function AddEventList(obj) {
 		this.dataLeftArray = obj.leftData;
 		this.dataRightArray = obj.rightData;
@@ -134,50 +64,67 @@
 		this.mutexArry2 = [];
 		this.alertMutex = [];
 		this.mountDomId = obj.mountDomId;
-		this.templateJson = deepCopy(jsonData);
+		this.templateString = templateString;
+		this.fillDataObj = fillDataObj;
 		this.indexList = 0;
 		if (obj.mutexData) {
 			obj.mutexData.map(function (item) {
 				this.mutexArry1.push(item.split("-")[0]);
 				this.mutexArry2.push(item.split("-")[1]);
 				this.alertMutex.push(item + "(不能同时存在)");
-			}
-				.bind(this))
+			}.bind(this))
 		}
 		this.init();
 	}
 	AddEventList.prototype.count = 0;
-	AddEventList.prototype.createJsonData = function (arr, flag) {
+	AddEventList.prototype.fillData = function (arr, flag) {
 		var ix = flag == "left" ? 0 : 2;
+		var liString = "";
 		for (var i = 0; i < arr.length; i++) {
-			var childObj = {};
-			childObj.tagName = "li";
-			childObj.children = [arr[i]];
-			childObj.props = {};
 			var indexMutex1 = _.indexOf(this.mutexArry1, arr[i]);
 			var indexMutex2 = _.indexOf(this.mutexArry2, arr[i]);
-			if (indexMutex1 != -1) {
-				childObj.props['data-mutex'] = indexMutex1;
+			if (indexMutex1 == -1 && indexMutex2 == -1) {
+				var obj = {
+					dataName : arr[i],
+					item : arr[i]
+				}
+				var li = _.template(template_li);
+				li = li(obj);
+				liString += li;
+			} else {
+				if (indexMutex1 != -1) {
+					var mutex = indexMutex1;
+				}
+				if (indexMutex2 != -1) {
+					var mutex = indexMutex2;
+				}
+				var obj = {
+					dataName : arr[i],
+					dataMutex : mutex,
+					item : arr[i]
+				}
+				var li = _.template(template_li_mutex);
+				li = li(obj);
+				liString += li;
 			}
-			if (indexMutex2 != -1) {
-				childObj.props['data-mutex'] = indexMutex2;
-			}
-			this.templateJson.children[ix].children.push(childObj);
 		}
 		if (ix == 0) {
-			this.templateJson.props.id = 'wrapSelect' + this.count;
+			this.fillDataObj.leftLi = liString;
+			this.fillDataObj.count = this.count;
+		} else {
+			this.fillDataObj.rightLi = liString;
 		}
 	}
 	AddEventList.prototype.init = function () {
-		this.createJsonData(this.dataLeftArray, "left");
-		this.createJsonData(this.dataRightArray, "right");
-		var virtualDom = new Element(this.templateJson);
-		var realDom = virtualDom.render();
+		this.fillData(this.dataLeftArray, "left");
+		this.fillData(this.dataRightArray, "right");
+		var template = _.template(this.templateString);
+
 		if (!this.mountDomId) {
-			document.body.appendChild(realDom);
+			document.body.innerHTML = template(fillDataObj);
 		} else {
 			var mountDom = document.getElementById(this.mountDomId);
-			mountDom.appendChild(realDom);
+			mountDom.innerHTML = template(fillDataObj);
 		}
 		this.indexList = AddEventList.prototype.count;
 		AddEventList.prototype.count++;

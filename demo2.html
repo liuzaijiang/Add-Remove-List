@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
  <head>
   <title>liuzj</title>
@@ -10,21 +10,13 @@
    </div>
 <script src="underscore.js"></script>  
 <script src="jquery.js"></script>
-<script src="AddEventList.js"></script>  
+<script src="AddEventList2.js"></script>  
 <script>
     new AddEventList(
     {
 		leftData : ["人形检测", "遮挡报警", "徘徊检测"],
 		rightData : ["人脸检测", "越线", "区域入侵"],
 		mutexData : ["人形检测-遮挡报警", "徘徊检测-人脸检测"],
-		mountDomId : "circular"
-	})
-
-    new AddEventList(
-    {
-		leftData : ["1", "2", "3","4"],
-		rightData : [],
-		mutexData : ["1-3", "4-2"],
 		mountDomId : "circular"
 	})
 </script>
