@@ -38,14 +38,14 @@
 	}
 	var templateString =
 		'<div class="wrapSelect" id="wrapSelect<%=count%>">' +
-            '<ul class="selectBox selectLeft"><%=leftLi%></ul>' +
-            '<div class="buttonGroup">' +
-                '<button class="addBtn"></button>' +
-                '<button class="addAllBtn"></button>' +
-                '<button class="removeBtn"></button>' +
-                '<button class="removeAllBtn"></button>' +
-            '</div>' +
-            '<ul class="selectBox selectRight"><%=rightLi%><ul>' +
+		'<ul class="selectBox selectLeft"><%=leftLi%></ul>' +
+		'<div class="buttonGroup">' +
+		'<button class="addBtn"></button>' +
+		'<button class="addAllBtn"></button>' +
+		'<button class="removeBtn"></button>' +
+		'<button class="removeAllBtn"></button>' +
+		'</div>' +
+		'<ul class="selectBox selectRight"><%=rightLi%><ul>' +
 		'</div>'
 
 		var fillDataObj = {
@@ -72,7 +72,8 @@
 				this.mutexArry1.push(item.split("-")[0]);
 				this.mutexArry2.push(item.split("-")[1]);
 				this.alertMutex.push(item + "(不能同时存在)");
-			}.bind(this))
+			}
+				.bind(this))
 		}
 		this.init();
 	}
@@ -81,8 +82,13 @@
 		var ix = flag == "left" ? 0 : 2;
 		var liString = "";
 		for (var i = 0; i < arr.length; i++) {
-			var indexMutex1 = _.indexOf(this.mutexArry1, arr[i]);
-			var indexMutex2 = _.indexOf(this.mutexArry2, arr[i]);
+			if (this.mutexArry1.length > 0) {
+				var indexMutex1 = _.indexOf(this.mutexArry1, arr[i]);
+				var indexMutex2 = _.indexOf(this.mutexArry2, arr[i]);
+			} else {
+				var indexMutex1 = -1;
+				var indexMutex2 = -1;
+			}
 			if (indexMutex1 == -1 && indexMutex2 == -1) {
 				var obj = {
 					dataName : arr[i],
