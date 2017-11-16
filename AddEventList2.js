@@ -45,7 +45,7 @@
 		'<button class="removeBtn"></button>' +
 		'<button class="removeAllBtn"></button>' +
 		'</div>' +
-		'<ul class="selectBox selectRight"><%=rightLi%><ul>' +
+		'<ul class="selectBox selectRight"><%=rightLi%></ul>' +
 		'</div>'
 
 		var fillDataObj = {
